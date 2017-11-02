@@ -1,0 +1,14 @@
+UC: Edit Available Rooms
+1. Principal identifies self
+2. Principal declares intent to edit room schedule
+3. System recalls room schedule for display
+3. Principal selects existing room allotment or creates new room allotment
+  4a. Principal defines or edits allotment location, size, and time period
+    4.1 Principal confirms changes
+    4.2 System stores changes as temporary
+  4b. Principal deletes or cancels currently selected allotment
+    4.1 system stores deletion transaction temporarilly
+repeat steps 3-4 until finished
+5. Principle chooses to lock in schedule
+6. System displays list of changes from current session
+7. Principal locks in room schedule
