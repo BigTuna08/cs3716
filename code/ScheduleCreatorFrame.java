@@ -28,6 +28,8 @@ public class ScheduleCreatorFrame extends JFrame {
 	private JPanel roomInfoPanel;
 	private JPanel controlPanel;
 	
+	private JButton selectedRoom = null;
+	
 	private ScheduleManager scheduleManager;
 	
 
@@ -44,7 +46,7 @@ public class ScheduleCreatorFrame extends JFrame {
 		JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 50));
 		
 		ArrayList<String> labels = new ArrayList<>(Arrays.asList("Add New Room", "Edit Rooms", "Display Rooms"));
-		actionButtonPanel = buildButtonSet(labels.size(), new RoomButtonListener(),labels);
+		actionButtonPanel = buildButtonSet(labels.size(), new MainButtonsListener(),labels);
 		mainPanel.add(actionButtonPanel);
 		
 		roomInfoPanel = new JPanel(new GridLayout(0, 1));
@@ -72,6 +74,9 @@ public class ScheduleCreatorFrame extends JFrame {
 			p.add(newDateSelectorPanel());
 			pan.add(p);
 		}
+		p = new JPanel(new FlowLayout());
+		p.add(new JCheckBox("Add other avalibilities"));
+		pan.add(p);
 		addPanel.add(pan);
 		
 		String[] dayLabels = {"Mon", "Tues", "Weds", "Thurs", "Fri", "Sat", "Sun"};
@@ -104,18 +109,63 @@ public class ScheduleCreatorFrame extends JFrame {
 		controlPanel.removeAll();
 		
 		JPanel addPanel = new JPanel(new BorderLayout());//main panel to be displayed
-		addPanel.add(new JLabel("Current Rooms"),BorderLayout.NORTH);
-		Collection<String> rooms = Utils.loadListFromFile("data/rooms.txt");
 		JPanel p = new JPanel(new FlowLayout());
-		for (String room: rooms){
-			p.add(new JCheckBox(room));
-		}
+		p.add(new JLabel("Current Rooms"));
+		addPanel.add(p, BorderLayout.NORTH);
+		Collection<String> rooms = Utils.loadListFromFile("data/rooms.txt");
+		
+	    p = Utils.buildButtonSet(3, new RoomButtonListener(), rooms);
 		addPanel.add(p, BorderLayout.CENTER);
 		roomInfoPanel.add(addPanel);
 		roomInfoPanel.updateUI();
 		
-		controlPanel.add(new JButton("Edit Rooms"));
-		controlPanel.add(new JButton("Delete Rooms"));
+		JButton b = new JButton("Edit Room");
+		b.addActionListener(new ControlButtonListener());
+		controlPanel.add(b);
+		b = new JButton("Delete Room");
+		b.addActionListener(new ControlButtonListener());
+		controlPanel.add(b);
+	}
+	
+	
+//	private void showEditRoomOld() {
+//		roomInfoPanel.removeAll();
+//		controlPanel.removeAll();
+//		
+//		JPanel addPanel = new JPanel(new BorderLayout());//main panel to be displayed
+//		addPanel.add(new JLabel("Current Rooms"),BorderLayout.NORTH);
+//		Collection<String> rooms = Utils.loadListFromFile("data/rooms.txt");
+//		JPanel p = new JPanel(new FlowLayout());
+//		for (String room: rooms){
+//			p.add(new JCheckBox(room));
+//		}
+//		addPanel.add(p, BorderLayout.CENTER);
+//		roomInfoPanel.add(addPanel);
+//		roomInfoPanel.updateUI();
+//		
+//		JButton b = new JButton("Edit Rooms");
+//		b.addActionListener(new ControlButtonListener());
+//		controlPanel.add(b);
+//		b = new JButton("Delete Rooms");
+//		b.addActionListener(new ControlButtonListener());
+//		controlPanel.add(b);
+//	}
+	
+	private void showEditingRoom() {
+		roomInfoPanel.removeAll();
+		controlPanel.removeAll();
+		
+		JPanel addPanel = new JPanel(new BorderLayout());
+		JPanel pan = new JPanel(new FlowLayout());
+		pan.add(new JLabel("Editing " + selectedRoom.getText()));
+		
+		addPanel.add(pan, BorderLayout.NORTH);
+		pan = new JPanel(new FlowLayout());
+		pan.add(new JLabel("Show list of current avalibilities. Give option to add/remove"));
+		addPanel.add(pan, BorderLayout.CENTER);
+		roomInfoPanel.add(addPanel);
+		roomInfoPanel.updateUI();
+		controlPanel.updateUI();
 	}
 
 	private void createDisplayRoom() {
@@ -221,7 +271,7 @@ public class ScheduleCreatorFrame extends JFrame {
 
 	
 	//fix to not rely on button text
-	public class RoomButtonListener implements ActionListener {
+	public class MainButtonsListener implements ActionListener {
 		public void actionPerformed(ActionEvent e)
 	    {
 	        Object source = e.getSource();
@@ -245,5 +295,58 @@ public class ScheduleCreatorFrame extends JFrame {
 	    }
 
 	}
+	
+	public class ControlButtonListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Object source = e.getSource();
+			 if (source instanceof JButton) {
+				 JButton btn = (JButton)source;
+				 if (btn.getText() == "Edit Room") {
+					 showEditingRoom();
+				 }
+				 else {
+					 
+				 }
+			 }
+		}
+		
+//		private Iterable<String> getCheckedRooms() {
+//			ArrayList<String> selectedRooms = new ArrayList<>();
+//        	for (Component comp: roomInfoPanel.getComponents()) {
+//        		for (Component comp2: ((JPanel) comp).getComponents()) {
+//        			if (comp2 instanceof JPanel) {
+//        				for (Component comp3: ((JPanel) comp2).getComponents()) {
+//        					if (((JCheckBox) comp3).isSelected()) {
+//        						System.out.println( ((JCheckBox) comp3).getText());
+//        					}
+//        				}
+//        			}
+//        		}
+//        	}
+//        	return selectedRooms;
+//		}
+	}
+	
+	public class RoomButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent e)
+	    { 
+	        Object source = e.getSource();
+	        if (source instanceof JButton) {
+	            JButton btn = (JButton)source;
+	            if (btn.getBackground()==DEFAULT_BUTTON_COLOR) {
+	            	if (selectedRoom != null) selectedRoom.setBackground(DEFAULT_BUTTON_COLOR);
+	            	btn.setBackground(ACTIVE_BUTTON_COLOR);
+	            	selectedRoom = btn;
+	            }
+	            else {
+	            	btn.setBackground(DEFAULT_BUTTON_COLOR);
+	            	selectedRoom = null;
+	            }
+	        }
+	    }
+	}
+	
 	
 }
