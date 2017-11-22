@@ -4,11 +4,12 @@ import java.util.Collection;
 /*
  * represents the schedules of all spaces at the school
  */
-public class MasterSchedule {
-
+public enum MasterSchedule {
+	INSTANCE;
 	private Collection<Space> spaces;
 	
-	public MasterSchedule() {
+	
+	private MasterSchedule() {
 		spaces = new ArrayList<>();
 	}
 	

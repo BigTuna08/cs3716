@@ -13,7 +13,7 @@ public class ScheduleManager {
 	 * creates a new MasterSchedule to manage
 	 */
 	public void createSchedule(Collection<Space> spaces) {
-		schedule = new MasterSchedule();
+		schedule = MasterSchedule.INSTANCE;
 		for (Space s: spaces) schedule.addSpace(s);
 	}
 	

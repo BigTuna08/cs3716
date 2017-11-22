@@ -9,23 +9,23 @@ import javax.swing.JFrame;
 public class Runner {
 
 	public static void main(String[] args) {
-		if (args.length < 1) {
-			System.out.println("Requires Command Line Argument!!\n'r' for request creator\n's' for schedule creator");
-			System.exit(0);
-		}
 		
-		if (args[0].equals("r") ) {
-			JFrame frame = new RequestCreatorFrame("data/rooms.txt");
-			frame.setVisible(true);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		}
-		else if (args[0].equals("c")) {
-			JFrame frame = new ScheduleCreatorFrame(null);
-			frame.setVisible(true);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		if (args.length > 0) {
+			if (args[0].equals("r") ) {
+				JFrame frame = new RequestCreatorFrame("data/rooms.txt");
+				frame.setVisible(true);
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			}
+			else if (args[0].equals("c")) {
+				JFrame frame = new ScheduleCreatorFrame(null);
+				frame.setVisible(true);
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			}else if(args[0].equals("devel")) {
+				
+			}
 		}
 		else {
-			System.out.println("Invalid command line input!!! Use: \n'r' for request creator\n's' for schedule creator");
+			System.out.println("usage: command r\n\topens request creator\ncommand c for schedule creator");
 		}
 		
 	}

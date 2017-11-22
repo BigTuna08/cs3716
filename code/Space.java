@@ -4,7 +4,13 @@
 public class Space {
 	String spaceID;
 	SpaceSchedule schedule;
+	String description;
 	
+	public Space(String description) {
+		this.description=description;
+	}
+	
+
 	/*
 	 * Make space unavailable for a period of time
 	 */
