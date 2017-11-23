@@ -1,38 +1,22 @@
+import java.util.ArrayList;
 import java.util.Collection;
 
+import java.io.Serializable;
 /*
  * Represents the schedule of a space
  * Contains a list of time periods which the
  * space is available for.
  */
-public class SpaceSchedule {
-	
-	/*
-	 * add an event to the schedule
-	 */
-	public void addEvent(Event e) {
-		
+public class SpaceSchedule implements Serializable{
+	public Collection<TimePeriod > blackouts;
+	public Collection<TimePeriod > availabilities;
+	public Collection<Event > events;
+	public SpaceSchedule() {
+		blackouts=new ArrayList();
+		availabilities=new ArrayList();
+		events=new ArrayList();
 	}
-	
-	/*
-	 * return collection of all events for the space
-	 */
-	public Collection<Event> getEvents() {
-		return null;
-	}
-	
-	
-	/*
-	 * returns collection of all time periods for the space
-	 */
-	public Collection<TimePeriod> getTimeSlots() {
-		return null;
-	}
-	
-	/*
-	 * returns collection of empty time periods for the space
-	 */
-	public Collection<TimePeriod> getEmptyTimeSlots() {
-		return null;
+	public String toString() {
+		return Utils.stringifyCollection(availabilities);
 	}
 }

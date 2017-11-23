@@ -1,0 +1,2 @@
+Singleton Pattern
+We apply the singleton pattern to MasterSchedule because there will only ever be one instance of MasterSchedule. Since MasterSchedule is integral to the model it is necessarily coupled with many other classes. Forcing them to share an instance reduces the need to keep or pass references to an instance of MasterSchedule and reduces the chance of accidentaly creating more than one. The singlteon pattern also allows lazy instantiation which we exploit by only loading the schedule from disk when it is accessed.

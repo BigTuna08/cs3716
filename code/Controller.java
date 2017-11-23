@@ -1,16 +1,16 @@
 //directs input from the user interface to the back end model
 public enum Controller {
 	INSTANCE;
-	void addSpace(String description) {
-		Space s=new Space(description);
-		MasterSchedule.INSTANCE.addSpace(s);
+	MasterSchedule ms=MasterSchedule.getInstance();
+	void addSpace(String name,String description) {
+		Space s=new Space(name,description);
+		MasterSchedule.getInstance().addSpace(s);
 	}
-	//TODO remove space
-	void addBlackOut() {
-		
+	void addBlackOut(Space s, TimePeriod tp) {
+		s.schedule.blackouts.add(tp);
 	}
-	void addTimePeriod(Space s,TimePeriod t) {
-		
+	void addTimePeriod(Space s,TimePeriod tp) {
+		s.schedule.availabilities.add(tp);
 	}
 	
 }

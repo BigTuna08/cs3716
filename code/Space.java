@@ -1,42 +1,20 @@
+import java.io.Serializable;
+
 /*
  * Used to represent a space which can be booked
  */
-public class Space {
-	String spaceID;
+public class Space implements Serializable{
 	SpaceSchedule schedule;
+	String name;
 	String description;
 	
-	public Space(String description) {
+	public Space(String name,String description) {
 		this.description=description;
+		this.name=name;
+		schedule=new SpaceSchedule();
 	}
 	
-
-	/*
-	 * Make space unavailable for a period of time
-	 */
-	public void blackout(TimePeriod t) {
-		
+	public String toString() {
+		return name+" | "+description+" | schedule:\n"+schedule.toString();
 	}
-	
-	/*
-	 * add event to the spaces schedule
-	 */
-	public void addEvent(Event e) {
-		
-	}
-	
-	/*
-	 * returns the spaces schedule
-	 */
-	public SpaceSchedule getSchedule() {
-		return null;
-	}
-	
-	/*
-	 * sets the schedule for this space
-	 */
-	public void setSchedule(SpaceSchedule s) {
-		
-	}
-	
 }

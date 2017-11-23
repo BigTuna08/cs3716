@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Collection;
 
 import javax.swing.*;
-
+import javax.swing.UIManager.*;
 
 /*
  * Ugly code, will be fixed for final implementation 
@@ -30,11 +30,11 @@ public class ScheduleCreatorFrame extends JFrame {
 	
 	private JButton selectedRoom = null;
 	
-	private ScheduleManager scheduleManager;
+	private MasterSchedule ms;
 	
 
-	public ScheduleCreatorFrame(ScheduleManager sm) {
-		scheduleManager = sm;
+	public ScheduleCreatorFrame() {
+		ms = MasterSchedule.getInstance();
 		setTitle("Create Schedule");
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		setLayout(new BorderLayout());
@@ -44,6 +44,14 @@ public class ScheduleCreatorFrame extends JFrame {
 	
 	public void createPanels() {
 		JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 50));
+		
+		
+//		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+//	        if ("Nimbus".equals(info.getName())) {
+//	            UIManager.setLookAndFeel(info.getClassName());
+//	            break;
+//	        }
+//	    }
 		
 		ArrayList<String> labels = new ArrayList<>(Arrays.asList("Add New Room", "Edit Rooms", "Display Rooms"));
 		actionButtonPanel = buildButtonSet(labels.size(), new MainButtonsListener(),labels);

@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -6,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -28,13 +30,14 @@ public class Utils {
 			in.close();
 			
 		} catch (FileNotFoundException e) {
+			
 			System.out.println("Error reading in " + fileLocation);
 		}
 		return theList;
 	}
 	
 	public static JPanel buildButtonSet(int cols, ActionListener listener, Collection<String> labels) {
-		JPanel newPanel = new JPanel(new GridLayout(0, cols));
+		JPanel newPanel = new JPanel(new FlowLayout());
 		for (String lbl: labels) {
 			JButton b = new JButton(lbl);
 			b.setBackground(DEFAULT_BUTTON_COLOR);
@@ -42,5 +45,9 @@ public class Utils {
 			newPanel.add(b);
 		}
 		return newPanel;
+	}
+	
+	public static String stringifyCollection(Collection c) {
+		return (String) c.stream().map(e->e.toString()).collect(Collectors.joining(","));
 	}
 }
