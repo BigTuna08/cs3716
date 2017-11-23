@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 
 import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 class TestingFrame extends JFrame{
 	JTabbedPane tabs;
@@ -26,6 +27,16 @@ class TestingFrame extends JFrame{
 	JPanel main=new JPanel();
 	public TestingFrame() {
 		super("Schedule Creation");
+		try {
+		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+		        if ("Nimbus".equals(info.getName())) {
+		            UIManager.setLookAndFeel(info.getClassName());
+		            break;
+		        }
+		    }
+		} catch (Exception e) {
+		    // If Nimbus is not available, you can set the GUI to another look and feel.
+		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {//write to db on exit
 			@Override
@@ -47,6 +58,11 @@ class TestingFrame extends JFrame{
 		this.add(tabs);
 		//panel 1
 		addRoomPanel=new JPanel();
+		addRoomPanel.setLayout(new BoxLayout(addRoomPanel, BoxLayout.Y_AXIS));
+		JPanel addRoomPanelRow1=new JPanel();
+		JPanel addRoomPanelRow2=new JPanel();
+		addRoomPanel.add(addRoomPanelRow1);
+		addRoomPanel.add(addRoomPanelRow2);
 		roomNameField=new JTextField(10);
 		roomDescriptionField=new JTextField(20);
 		roomSubmitBtn=new JButton("add room");
@@ -55,9 +71,11 @@ class TestingFrame extends JFrame{
 				Controller.INSTANCE.addSpace(roomNameField.getText(), roomDescriptionField.getText());
 			}	
 		});
-		addRoomPanel.add(roomNameField);
-		addRoomPanel.add(roomDescriptionField);
-		addRoomPanel.add(roomSubmitBtn);
+		addRoomPanelRow1.add(new JLabel("name:"));
+		addRoomPanelRow1.add(roomNameField);
+		addRoomPanelRow1.add(new JLabel("description:"));
+		addRoomPanelRow1.add(roomDescriptionField);
+		addRoomPanelRow2.add(roomSubmitBtn);
 
 		tabs.addTab("Room Creation", addRoomPanel);
 		
