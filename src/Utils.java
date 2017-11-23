@@ -17,6 +17,7 @@ public class Utils {
 	private final static Color DEFAULT_BUTTON_COLOR = Color.GRAY;
 	private final static Color ACTIVE_BUTTON_COLOR = Color.GREEN;
 	
+	public static String[] days= {"mon","tues","wed","thurs","fri","sat","sun"};
 	public static Collection<String> loadListFromFile(String fileLocation) {
 		ArrayList<String> theList = new ArrayList<>();
 		

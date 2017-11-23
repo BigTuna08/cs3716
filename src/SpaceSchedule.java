@@ -19,4 +19,8 @@ public class SpaceSchedule implements Serializable{
 	public String toString() {
 		return Utils.stringifyCollection(availabilities);
 	}
+	public void addTime(TimePeriod tp) {
+		availabilities.add(tp);
+		
+	}
 }

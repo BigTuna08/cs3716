@@ -46,12 +46,7 @@ public class ScheduleCreatorFrame extends JFrame {
 		JPanel mainPanel = new JPanel(new GridLayout(0, 1, 0, 50));
 		
 		
-//		for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-//	        if ("Nimbus".equals(info.getName())) {
-//	            UIManager.setLookAndFeel(info.getClassName());
-//	            break;
-//	        }
-//	    }
+
 		
 		ArrayList<String> labels = new ArrayList<>(Arrays.asList("Add New Room", "Edit Rooms", "Display Rooms"));
 		actionButtonPanel = buildButtonSet(labels.size(), new MainButtonsListener(),labels);

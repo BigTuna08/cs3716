@@ -15,12 +15,12 @@ public class TimePeriod implements Serializable{
 	LocalTime startTime;
 	LocalTime endTime; 
 	
-	public TimePeriod(LocalDate of, LocalDate of2, LocalTime of3, LocalTime of4) {
-		startDate=of;
-		endDate=of2;
-		startTime=of3;
-		endTime=of4;
-		daysOfWeek=new DayMask();
+	public TimePeriod(LocalDate sd, LocalDate ed, LocalTime st, LocalTime et, DayMask days) {
+		startDate=sd;
+		endDate=ed;
+		startTime=st;
+		endTime=et;
+		daysOfWeek=days;
 	}
 
 	/*
@@ -38,5 +38,7 @@ public class TimePeriod implements Serializable{
 	public boolean overlaps(TimePeriod t) {
 		return !startTime.isAfter(t.endTime) && !endTime.isAfter(t.startTime);
 	}
-	
+	public String toString() {
+		return "["+startDate+" "+endDate+" "+startTime+" "+endTime+" "+daysOfWeek+"]";
+	}
 }
