@@ -95,7 +95,23 @@ public class MasterSchedule implements Serializable, Observable{
 		s.schedule.addTime(tp);
 		updateAll();
 	}
+	public void removeTime(Space s, TimePeriod tp) {
+		s.schedule.removeTime(tp);
+		updateAll();
+
+	}
 	public Collection<Space> getSpaces() {
 		return spaces;
+	}
+
+	public void addBlackout(Space s, TimePeriod tp) {
+		s.schedule.addBlackout(tp);
+		updateAll();
+	}
+
+	public void deleteSpace(Space s) {
+		//TODO? make sure this doesn't violate a billion constraints
+		spaces.remove(s);
+		updateAll();
 	}
 }

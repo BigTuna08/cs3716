@@ -7,10 +7,15 @@ public enum Controller{
 		MasterSchedule.getInstance().addSpace(s);
 	}
 	void addBlackOut(Space s, TimePeriod tp) {
-		s.schedule.blackouts.add(tp);
+		ms.addBlackout(s,tp);
 	}
 	void addTimePeriod(Space s,TimePeriod tp) {
 		ms.addTime(s,tp);
 	}
-	
+	void removeTimePeriod(Space s,TimePeriod tp) {
+		ms.removeTime(s, tp);
+	}
+	public void deleteSpace(Space s) {
+		ms.deleteSpace(s);
+	}
 }

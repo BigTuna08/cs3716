@@ -21,6 +21,12 @@ public class SpaceSchedule implements Serializable{
 	}
 	public void addTime(TimePeriod tp) {
 		availabilities.add(tp);
+	}
+	public void addBlackout(TimePeriod tp) {
+		blackouts.add(tp);
+	}
+	public void removeTime(TimePeriod tp) {
+		availabilities.remove(tp);
 		
 	}
 }

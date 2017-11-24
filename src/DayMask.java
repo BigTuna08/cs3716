@@ -33,7 +33,13 @@ public class DayMask implements Serializable{
 		mask|=1<<day;
 	}
 	public String toString() {
-		return String.format("%o", mask);
+		char[] oneLetter= {'m','t','w','r','f','s','u'};
+		StringBuilder sb=new StringBuilder();
+		for(int i=1;i<=days.length;i++) {
+			if(0!=(mask&(1<<i)))
+				sb.append(oneLetter[i]);
+		}
+		return sb.toString();
 	}
 }
 
