@@ -70,6 +70,7 @@ class TestingFrame extends JFrame{
 							});
 							add(b);
 						}
+						updateUI();
 					}
 				
 				};
