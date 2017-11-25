@@ -267,7 +267,62 @@ class TestingFrame extends JFrame{
 			updater.update();
 		}
 	}
- 	
+ 	static class RoomRequestLineComponent extends JPanel{
+ 		RoomSelectorComponent rsc=new RoomSelectorComponent();
+ 		JSpinner syear,eyear,smonth,emonth,sday,eday,shr,ehr,smin,emin;
+ 		RoomRequestLineComponent(){
+ 			add(rsc);
+
+			syear=new JSpinner(new SpinnerNumberModel(2017,1900,3000,1));
+			eyear=new JSpinner(new SpinnerNumberModel(2018,1900,3000,1));
+			smonth=new JSpinner(new SpinnerNumberModel(1,1,12,1));
+			emonth=new JSpinner(new SpinnerNumberModel(1,1,12,1));
+			sday=new JSpinner(new SpinnerNumberModel(1,1,31,1));
+			eday=new JSpinner(new SpinnerNumberModel(1,1,31,1));
+			shr=new JSpinner(new SpinnerNumberModel(9,0,23,1));
+			ehr=new JSpinner(new SpinnerNumberModel(10,0,23,1));
+			smin=new JSpinner(new SpinnerNumberModel(0,0,59,1));
+			emin=new JSpinner(new SpinnerNumberModel(0,0,59,1));
+		
+			JPanel dtPanel1=new JPanel();
+			JPanel dtPanel2=new JPanel();
+			JPanel dtPanel3=new JPanel();
+			JPanel dtPanel4=new JPanel();
+			add(dtPanel1);
+			add(dtPanel2);
+			add(dtPanel3);
+			add(dtPanel4);
+			
+			add(new JLabel("YYYY-MM-DD"));
+			add(syear);
+			add(smonth);
+			add(sday);
+			
+			add(new JLabel("to"));
+			add(eyear);
+			add(emonth);
+			add(eday);
+			
+			add(new JLabel("HH-MM"));
+			add(shr);
+			add(smin);
+			add(new JLabel("to"));
+			add(ehr);
+			add(emin);
+ 			
+ 		}
+ 	}
+	static class RequestRoomTab extends JPanel{
+ 		RoomRequestLineComponent[] priorities;
+ 		RequestRoomTab(){
+ 			setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+ 			priorities=new RoomRequestLineComponent[5];
+ 			for(int i=0;i<priorities.length;i++) {
+ 				priorities[i]=new RoomRequestLineComponent();
+ 				add(priorities[i]);
+ 			}
+ 		}
+ 	}
 	public TestingFrame() {
 		super("Schedule Creation");
 		try {
@@ -301,6 +356,7 @@ class TestingFrame extends JFrame{
 		tabs.addTab("add times", new AddTimeTab());
 		tabs.addTab("display", new ConsoleTab());
 		tabs.addTab("remove times", new EditTimesTab());
+		tabs.addTab("Rquest", new RequestRoomTab());
 		this.pack();
 		//System.out.println(displayPanel.getSize());
 		//System.out.println(consoleOutput.getSize());
