@@ -3,13 +3,17 @@ import java.awt.FlowLayout;
 import java.awt.event.*;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
+
+import jdatepicker.JDatePicker;
 
 class TestingFrame extends JFrame{
 	JPanel main=new JPanel();
@@ -112,6 +116,7 @@ class TestingFrame extends JFrame{
 	static class AddTimeTab extends JPanel{
 		JCheckBox[] dayCheckBoxes=new JCheckBox[7];
 		JSpinner syear,smonth,sday,eyear,emonth,eday,shr,smin,ehr,emin;
+		JDatePicker start,end;
 		RoomSelectorComponent roomSel=new RoomSelectorComponent();
 		ButtonGroup roomActionGrp;
 		AddTimeTab(){
@@ -141,12 +146,12 @@ class TestingFrame extends JFrame{
 				dayCheckPanel.add(dayCheckBoxes[i]);
 			}
 			
-			syear=new JSpinner(new SpinnerNumberModel(2017,1900,3000,1));
+			/*syear=new JSpinner(new SpinnerNumberModel(2017,1900,3000,1));
 			eyear=new JSpinner(new SpinnerNumberModel(2018,1900,3000,1));
 			smonth=new JSpinner(new SpinnerNumberModel(1,1,12,1));
 			emonth=new JSpinner(new SpinnerNumberModel(1,1,12,1));
 			sday=new JSpinner(new SpinnerNumberModel(1,1,31,1));
-			eday=new JSpinner(new SpinnerNumberModel(1,1,31,1));
+			eday=new JSpinner(new SpinnerNumberModel(1,1,31,1));*/
 			shr=new JSpinner(new SpinnerNumberModel(9,0,23,1));
 			ehr=new JSpinner(new SpinnerNumberModel(10,0,23,1));
 			smin=new JSpinner(new SpinnerNumberModel(0,0,59,1));
@@ -161,15 +166,15 @@ class TestingFrame extends JFrame{
 			add(dtPanel3);
 			add(dtPanel4);
 			
-			dtPanel1.add(new JLabel("start date (YYYY-MM-DD)"));
-			dtPanel1.add(syear);
-			dtPanel1.add(smonth);
-			dtPanel1.add(sday);
+			dtPanel1.add(new JLabel("date range:"));
+			start=new JDatePicker(new Date(2017,01,01));
+			end=new JDatePicker(new Date(2018,01,01));
 			
-			dtPanel2.add(new JLabel("end date (YYYY-MM-DD)"));
-			dtPanel2.add(eyear);
-			dtPanel2.add(emonth);
-			dtPanel2.add(eday);
+			start=new JDatePicker(new Date(2018,01,01));
+			dtPanel1.add(start);
+			dtPanel1.add(new JLabel("to"));
+			dtPanel1.add(end);
+			
 			
 			dtPanel3.add(new JLabel("time range (HH-MM 24 hr clock)"));
 			dtPanel3.add(shr);
@@ -224,6 +229,7 @@ class TestingFrame extends JFrame{
 	}
 	static class EditTimesTab extends JPanel{
 		RoomSelectorComponent roomSel=new RoomSelectorComponent();
+		
 		EditTimesTab(){
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			JPanel top=new JPanel();
@@ -269,21 +275,17 @@ class TestingFrame extends JFrame{
 	}
  	static class RoomRequestLineComponent extends JPanel{
  		RoomSelectorComponent rsc=new RoomSelectorComponent();
- 		JSpinner syear,eyear,smonth,emonth,sday,eday,shr,ehr,smin,emin;
- 		RoomRequestLineComponent(){
+ 		JSpinner shr,ehr,smin,emin;
+ 		RoomRequestLineComponent(int i){
  			add(rsc);
 
-			syear=new JSpinner(new SpinnerNumberModel(2017,1900,3000,1));
-			eyear=new JSpinner(new SpinnerNumberModel(2018,1900,3000,1));
-			smonth=new JSpinner(new SpinnerNumberModel(1,1,12,1));
-			emonth=new JSpinner(new SpinnerNumberModel(1,1,12,1));
-			sday=new JSpinner(new SpinnerNumberModel(1,1,31,1));
-			eday=new JSpinner(new SpinnerNumberModel(1,1,31,1));
+			JDatePicker sdate=new JDatePicker(new Date(2017,1,1));
+			JDatePicker edate=new JDatePicker(new Date(2018,1,1));
 			shr=new JSpinner(new SpinnerNumberModel(9,0,23,1));
 			ehr=new JSpinner(new SpinnerNumberModel(10,0,23,1));
 			smin=new JSpinner(new SpinnerNumberModel(0,0,59,1));
 			emin=new JSpinner(new SpinnerNumberModel(0,0,59,1));
-		
+			
 			JPanel dtPanel1=new JPanel();
 			JPanel dtPanel2=new JPanel();
 			JPanel dtPanel3=new JPanel();
@@ -292,35 +294,69 @@ class TestingFrame extends JFrame{
 			add(dtPanel2);
 			add(dtPanel3);
 			add(dtPanel4);
-			
-			add(new JLabel("YYYY-MM-DD"));
-			add(syear);
-			add(smonth);
-			add(sday);
+			add(new JLabel("#"+i+":"));
+			add(new JLabel("start date"));
+			add(sdate);
 			
 			add(new JLabel("to"));
-			add(eyear);
-			add(emonth);
-			add(eday);
+			add(edate);
 			
 			add(new JLabel("HH-MM"));
 			add(shr);
 			add(smin);
-			add(new JLabel("to"));
+			add(new JLabel("to")); 
 			add(ehr);
 			add(emin);
  			
  		}
  	}
 	static class RequestRoomTab extends JPanel{
- 		RoomRequestLineComponent[] priorities;
+ 		ArrayList<RoomRequestLineComponent> priorities=new ArrayList();;
+ 		JTextField name=new JTextField(10);
+ 		JTextField description=new JTextField(20);
+ 		
  		RequestRoomTab(){
+ 			JPanel outer=new JPanel();
+ 			outer.setLayout(new BoxLayout(outer,BoxLayout.Y_AXIS));
  			setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
- 			priorities=new RoomRequestLineComponent[5];
- 			for(int i=0;i<priorities.length;i++) {
- 				priorities[i]=new RoomRequestLineComponent();
- 				add(priorities[i]);
+ 			JPanel infoPanel=new JPanel();
+ 			infoPanel.add(new JLabel("event name:"));
+ 			infoPanel.add(name);
+ 			infoPanel.add(new JLabel("description:"));
+ 			infoPanel.add(description);
+ 			add(infoPanel);
+ 			JPanel inner=new JPanel();
+ 			
+ 			add(outer);
+ 			class RowAdder implements ActionListener{
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int i=priorities.size();
+					RoomRequestLineComponent rrlc = new RoomRequestLineComponent(i);
+	 				priorities.add(rrlc);
+	 				inner.add(rrlc);
+	 				
+				}
+ 				
  			}
+ 			JPanel lower=new JPanel();
+ 			add(inner);
+ 			add(lower);
+ 			
+ 			JButton addPriority=new JButton("define more alternatives");
+ 			lower.add(addPriority);
+ 			RowAdder ra=new RowAdder();
+ 			addPriority.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					System.out.println("HELLO!");
+					ra.actionPerformed(null);
+				}
+ 				
+ 			});
+ 			ra.actionPerformed(null);
  		}
  	}
 	public TestingFrame() {
@@ -343,6 +379,7 @@ class TestingFrame extends JFrame{
         		try {
         			ObjectOutputStream objectWriter=new ObjectOutputStream(new FileOutputStream("masterschedule.data"));
         			objectWriter.writeObject(MasterSchedule.getInstance());
+        			objectWriter.writeObject(RequestQueue.getInstance());
         			objectWriter.close();
         		} catch (Exception e1) {
         			e1.printStackTrace();

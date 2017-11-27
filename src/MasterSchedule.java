@@ -8,24 +8,18 @@ import java.util.Collection;
 /*
  * represents the schedules of all spaces at the school
  */
-public class MasterSchedule implements Serializable, Observable{
+public class MasterSchedule implements Serializable, Observable, Transient{
 	static MasterSchedule instance=null;
 	transient ArrayList<Observer> subscribers;
 
 	static MasterSchedule getInstance(){
 		if(instance==null) {
-			try {
-				System.out.println("loading the database...");
-				ObjectInputStream r=new ObjectInputStream(new FileInputStream("masterschedule.data"));
-				instance=(MasterSchedule)r.readObject();
-				r.close();
-			} catch (Exception e) {
-				System.out.println("failed to load db, or db doesn't exist");
+			try{
+				instance=(MasterSchedule)Unserializer.fromFile("masterschedule.data");
+			}catch(Exception e) {
 				instance=new MasterSchedule();
 			}
-			instance.initTransient();
 		}
-		
 		return instance;
 	}
 	private Collection<Space> spaces;
@@ -35,6 +29,7 @@ public class MasterSchedule implements Serializable, Observable{
 
 	private MasterSchedule() {
 		spaces = new ArrayList<>();
+		initTransient();
 	}
 	
 	/*
