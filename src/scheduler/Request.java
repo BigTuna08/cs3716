@@ -7,18 +7,18 @@ import java.util.ArrayList;
  */
 public class Request implements Serializable{
 
-	public Request(String name, String description, String evtName, String desc, Space location, ArrayList<TimePeriod> requestPeriods) {
+	public Request(String name, String description, String evtName, String desc, ArrayList<EventTimeSpaceProposal> requestAlternatives) {
 		this.setUsername(name);
 		this.contact=contact;
 		this.name = name;
 		this.description = description;
-		this.location = location;
-		this.requestPeriods = requestPeriods;
+		this.requestAlternatives = requestAlternatives;
 	}
 	//private Stakeholder issuer;
 	private String username;//name of issuer
 	private String contact;//email
 	private String name;//name of event
+	private int daysPerWeek;
 	public String getContact() {
 		return contact;
 	}
@@ -37,29 +37,23 @@ public class Request implements Serializable{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public ArrayList<TimePeriod> getRequestPeriods() {
-		return requestPeriods;
+	public ArrayList<EventTimeSpaceProposal> getRequestAlternatives() {
+		return requestAlternatives;
 	}
-	public void setRequestPeriods(ArrayList<TimePeriod> requestPeriods) {
-		this.requestPeriods = requestPeriods;
+	public void setRequestPeriods(ArrayList<EventTimeSpaceProposal> requestAlternatives) {
+		this.requestAlternatives = requestAlternatives;
 	}
 	private String description;//comment
 	
-	private Space location;
-	public Space getLocation() {
-		return location;
-	}
-	public void setLocation(Space location) {
-		this.location = location;
-	}
-	ArrayList<TimePeriod> requestPeriods;
+
+	ArrayList<EventTimeSpaceProposal> requestAlternatives;
 	private boolean highPriority = false;
 	
 	private boolean acceptOtherTimes;
 	private boolean acceptOtherDates;
 	private boolean acceptOtherRooms;
 	public String toString() {
-		return "["+getUsername()+"|"+contact+"|"+name+"|"+description+"|"+location.getName()+"|"+requestPeriods+"]";
+		return "["+getUsername()+"|"+contact+"|"+name+"|"+description+"|"+location.getName()+"|"+requestAlternatives+"]";
 	}
 	public String getUsername() {
 		return username;

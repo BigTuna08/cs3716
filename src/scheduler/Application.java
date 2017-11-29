@@ -2,6 +2,7 @@ package scheduler;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,7 +17,8 @@ import javax.swing.JFrame;
  */
 public class Application  {
 	public static void main(String[] args) {
-		Locale.setDefault(Locale.ENGLISH);
+		
+		Locale.setDefault(Locale.ENGLISH);	
 		if (args.length > 0) {
 			if(args[0].equals("principal")) {
 				new TabbedGUI(TabbedGUI.Access.PRINCIPAL);

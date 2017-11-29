@@ -51,7 +51,7 @@ public final class ComponentIconDefaults {
         // TODO
     }
 
-    private static String CLEAR = "/org/jdatepicker/icons/clear.png";
+    private static String CLEAR = "/clear.png";
 
     private Icon clearIcon;
     private Icon nextMonthIconEnabled;

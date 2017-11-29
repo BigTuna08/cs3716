@@ -297,39 +297,36 @@ class TabbedGUI extends JFrame{
 			updater.update();
 		}
 	}
- 	static class RoomRequestLineComponent extends JPanel{
+
+	static class RoomRequestLineComponent extends JPanel{
  		RoomSelectorComponent rsc=new RoomSelectorComponent();
  		JSpinner shr,ehr,smin,emin;
- 		JDatePicker sdate,edate;
- 		JComboBox PeriodSel=new JComboBox();
+ 		//JDatePicker sdate,edate;
+ 		//JComboBox PeriodSel=new JComboBox();
+ 		JComboBox daySelector=new JComboBox();
  		RoomRequestLineComponent(int i){
- 			for(Period P:TimePeriod.Period.values()) {
- 				PeriodSel.addItem(P);
+ 			//for(Period P:TimePeriod.Period.values()) {
+ 			//	PeriodSel.addItem(P);
+ 			//}
+			//sdate=new JDatePicker(new Date(118,1,1));
+			//edate=new JDatePicker(new Date(119,1,1));
+ 			
+ 			for(String d:Utils.days) {
+ 				daySelector.addItem(d);
  			}
-			sdate=new JDatePicker(new Date(118,1,1));
-			edate=new JDatePicker(new Date(119,1,1));
 			shr=new JSpinner(new SpinnerNumberModel(9,0,23,1));
 			ehr=new JSpinner(new SpinnerNumberModel(10,0,23,1));
 			smin=new JSpinner(new SpinnerNumberModel(0,0,59,1));
 			emin=new JSpinner(new SpinnerNumberModel(0,0,59,1));
 			
-			//JPanel dtPanel1=new JPanel();
-//			JPanel dtPanel2=new JPanel();
-//			JPanel dtPanel3=new JPanel();
-//			JPanel dtPanel4=new JPanel();
-//			add(dtPanel1);
-//			add(dtPanel2);
-//			add(dtPanel3);
-//			add(dtPanel4);
+
 			add(new JLabel("#"+i+":"));
-			add(PeriodSel);
-			add(new JLabel("start date"));
-			add(sdate);
+
+			add(daySelector);
+			add(new JLabel("in room:"));
+			add(rsc);
 			
-			add(new JLabel("to"));
-			add(edate);
-			
-			add(new JLabel("HH-MM"));
+			add(new JLabel("from (HH-MM)"));
 			add(shr);
 			add(smin);
 			add(new JLabel("to")); 
@@ -338,19 +335,33 @@ class TabbedGUI extends JFrame{
  			
  		}
  	}
+	/*
+	 * A tab that submits requests in the name of `username`
+	 */
 	class RequestRoomTab extends JPanel{
- 		ArrayList<RoomRequestLineComponent> priorities=new ArrayList();;
+ 		ArrayList<RoomRequestLineComponent> priorities=new ArrayList();
  		JTextField name=new JTextField(10);
  		JTextField description=new JTextField(20);
- 		RoomSelectorComponent rsc=new RoomSelectorComponent();
+ 		JDatePicker fromDate;
+ 		JDatePicker toDate;
+ 		JSpinner timesPerWeek=new JSpinner(new SpinnerNumberModel(1,1,1,7));
  		RequestRoomTab(String username, String contact){
  			setLayout(new BorderLayout());
  			JPanel infoPanel=new JPanel();
- 			infoPanel.add(rsc);
  			infoPanel.add(new JLabel("event name:"));
  			infoPanel.add(name);
  			infoPanel.add(new JLabel("description:"));
  			infoPanel.add(description);
+ 			JPanel infoPanel2=new JPanel();
+ 			infoPanel2.add(new JLabel("times per week"));
+ 			infoPanel2.add(timesPerWeek);
+ 			fromDate=new JDatePicker(new Date(117,1,1));
+ 			toDate=new JDatePicker(new Date(117,1,1));
+ 			infoPanel2.add(new JLabel("from"));
+ 			infoPanel2.add(fromDate);
+ 			infoPanel2.add(new JLabel("to"));
+ 			infoPanel2.add(toDate);
+ 			add(infoPanel2,BorderLayout.NORTH);
  			add(infoPanel,BorderLayout.NORTH);
  			JPanel inner=new JPanel();
  			inner.setLayout(new BoxLayout(inner,BoxLayout.Y_AXIS));
@@ -382,21 +393,22 @@ class TabbedGUI extends JFrame{
 				public void actionPerformed(ActionEvent arg0) {
 					String evtName=name.getText();
 					String desc=description.getText();
-					ArrayList<TimePeriod> al=new ArrayList(priorities.size());
-					Space room=rsc.getRoom();
+					LocalDate startDate=Utils.pickerToLocalDate(fromDate);
+					LocalDate endDate=Utils.pickerToLocalDate(toDate);
+					ArrayList<EventTimeSpaceProposal> al=new ArrayList(priorities.size());
 					for(RoomRequestLineComponent rrlc:priorities) {
 						LocalTime startTime=LocalTime.of((int)rrlc.shr.getValue(), (int)rrlc.smin.getValue());
 						LocalTime endTime=LocalTime.of((int)rrlc.shr.getValue(), (int)rrlc.smin.getValue());
 						
-						LocalDate startDate=Utils.pickerToLocalDate(rrlc.sdate);
-						LocalDate endDate=Utils.pickerToLocalDate(rrlc.edate);
 						DayMask days=new DayMask(false);
-						days.setDay(startDate.getDayOfWeek().getValue());
-						TimePeriod.Period period=(Period) rrlc.PeriodSel.getSelectedItem();
-						TimePeriod tp=new TimePeriod(startDate,endDate,startTime,endTime,new DayMask(true),period);
-						al.add(tp);
+						days.setDay(rrlc.daySelector.getSelectedIndex());
+						TimePeriod tp=new TimePeriod(startDate,endDate,startTime,endTime,days,Period.WEEKLY);
+						Space room=rrlc.rsc.getRoom();
+						EventTimeSpaceProposal etsp=new EventTimeSpaceProposal(room,tp);
+						al.add(etsp);
 					}
-					Request r=new Request(username,contact,evtName,desc,room,al);
+					
+					Request r=new Request(username,contact,evtName,desc,al);
 					System.out.println("adding request");
 					RequestQueue.getInstance().add(r);
 				}
@@ -407,7 +419,6 @@ class TabbedGUI extends JFrame{
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					System.out.println("HELLO!");
 					ra.actionPerformed(null);
 				}
  				
@@ -416,7 +427,7 @@ class TabbedGUI extends JFrame{
  		}
  	}
 	static class ApprovalTab extends JPanel {
-		String[] cols= {"user","event","desc","time","action"};
+		String[] cols= {"approved/required days","user","event","desc","time and location","action"};
 		ApprovalTab(){
 			setLayout(new BorderLayout());
 			JPanel grid=new JPanel(new GridLayout(0,cols.length));
@@ -513,8 +524,10 @@ class TabbedGUI extends JFrame{
 			tabs.addTab("add times", new AddTimeTab());
 			tabs.addTab("remove times", new EditTimesTab());
 			tabs.addTab("approve requests",new ApprovalTab());
+			tabs.addTab("Request", new RequestRoomTab("principal","principal's office"));
+		}else {
+			tabs.addTab("Request", new RequestRoomTab(name,contact));
 		}
-		tabs.addTab("Request", new RequestRoomTab(name,contact));
 		tabs.addTab("display", new ConsoleTab());
 		
 		this.pack();
