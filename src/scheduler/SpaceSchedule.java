@@ -18,7 +18,7 @@ public class SpaceSchedule implements Serializable{
 		events=new ArrayList();
 	}
 	public String toString() {
-		return Utils.stringifyCollection(availabilities);
+		return "Avail:"+Utils.stringifyCollection(availabilities)+"\n evts:"+Utils.stringifyCollection(events);
 	}
 	public void addTime(TimePeriod tp) {
 		availabilities.add(tp);
@@ -29,5 +29,8 @@ public class SpaceSchedule implements Serializable{
 	public void removeTime(TimePeriod tp) {
 		availabilities.remove(tp);
 		
+	}
+	public void addEvent(Event e) {
+		events.add(e);
 	}
 }

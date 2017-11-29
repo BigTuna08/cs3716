@@ -19,7 +19,9 @@ public class RequestQueue implements Serializable, Transient, Observable{
 		publish();
 	}
 	private ArrayList<Request> requests=new ArrayList<Request>();
-	
+	public ArrayList<Request> getRequests(){
+		return requests;
+	}
 	public RequestQueue() {
 		initTransient();
 	}
@@ -64,6 +66,10 @@ public class RequestQueue implements Serializable, Transient, Observable{
 		for(Observer o:subscribers) {
 			o.update();
 		}
+	}
+	public void removeRequest(Request r) {
+		requests.remove(r);
+		publish();
 	}
 	
 }

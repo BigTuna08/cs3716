@@ -61,9 +61,11 @@ class DayDisplayStrategy implements DisplayStrategy {
 	@Override
 	public void init() {
 
-		UIDefaults uidef = UIManager.getDefaults();
-		int swidth = Integer.parseInt(uidef.get("ScrollBar.width").toString());
+		//UIDefaults uidef = UIManager.getDefaults();
+		//int swidth = Integer.parseInt(uidef.get("ScrollBar.width").toString());
 
+		int swidth=1;
+		
 		Calendar start = CalendarUtil.getCalendar(new Date(), true);
         Calendar end = CalendarUtil.getCalendar(new Date(), true);
         end.add(Calendar.DATE,1);

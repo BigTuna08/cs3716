@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -105,9 +107,16 @@ public class JCalendarFrameDemo extends JFrame {
 
 		Image addImg = null;
 		Image removeImg = null;
+		File f=new File("test");
 		try {
-			addImg = ImageIO.read(getClass().getResource("add-icon.png"));
-			removeImg = ImageIO.read(getClass().getResource("remove-icon.png"));
+			System.out.println(f.getCanonicalPath());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			addImg = ImageIO.read(getClass().getResource("/add-icon.png"));
+			removeImg = ImageIO.read(getClass().getResource("/remove-icon.png"));
 			addButton.setIcon(new ImageIcon(addImg));
 			removeButton.setIcon(new ImageIcon(removeImg));
 		} catch (final Exception e) {

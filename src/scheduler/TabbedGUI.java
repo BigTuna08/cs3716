@@ -1,7 +1,9 @@
 package scheduler;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -15,16 +17,25 @@ import java.util.function.Consumer;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 
 import jdatepicker.JDatePicker;
 import scheduler.TimePeriod.Period;
 
-class TestingFrame extends JFrame{
-	public void refit() {
-		pack();
+class TabbedGUI extends JFrame{
+
+	enum Access{
+		PRINCIPAL, LOW;
 	}
 	JPanel main=new JPanel();
 	JTabbedPane tabs=new JTabbedPane();
+	static class CalendarTab extends JPanel{
+		GraphicalCalendar cal=new GraphicalCalendar();
+		public CalendarTab() {
+			add(cal);
+		}
+	}
 	static class RoomSelectorComponent extends JComboBox  {
 		class SpaceWrapper{
 			public Space s;
@@ -138,19 +149,22 @@ class TestingFrame extends JFrame{
 			roomSelectorPanel.add(new JLabel("Action:"));
 			
 			JRadioButton roomActionAddAvail=new JRadioButton("add availability");
-			JRadioButton roomActionBlackOut=new JRadioButton("blackout");
+			roomActionAddAvail.setSelected(true);
+			JRadioButton roomActionBlackOut=new JRadioButton("blackout(not implemented)");
 			roomActionGrp=new ButtonGroup();
+			
 			roomActionGrp.add(roomActionAddAvail);
 			roomActionGrp.add(roomActionBlackOut);
 			roomSelectorPanel.add(roomActionAddAvail);
 			roomSelectorPanel.add(roomActionBlackOut);
-
+			
 			JPanel dayCheckPanel=new JPanel();
 			add(dayCheckPanel);
 			for(int i=0;i<7;i++) {
 				JLabel l=new JLabel(Utils.days[i]);
 				dayCheckPanel.add(l);
 				dayCheckBoxes[i]=new JCheckBox();
+				dayCheckBoxes[i].setSelected(true);
 				dayCheckPanel.add(dayCheckBoxes[i]);
 			}
 			
@@ -175,10 +189,8 @@ class TestingFrame extends JFrame{
 			add(dtPanel4);
 			
 			dtPanel1.add(new JLabel("date range:"));
-			start=new JDatePicker(new Date(2017,01,01));
-			end=new JDatePicker(new Date(2018,01,01));
-			
-			start=new JDatePicker(new Date(2018,01,01));
+			end=new JDatePicker(new Date(119,01,01));
+			start=new JDatePicker(new Date(118,01,01));
 			dtPanel1.add(start);
 			dtPanel1.add(new JLabel("to"));
 			dtPanel1.add(end);
@@ -294,8 +306,8 @@ class TestingFrame extends JFrame{
  			for(Period P:TimePeriod.Period.values()) {
  				PeriodSel.addItem(P);
  			}
-			sdate=new JDatePicker(new Date(2017,1,1));
-			edate=new JDatePicker(new Date(2018,1,1));
+			sdate=new JDatePicker(new Date(118,1,1));
+			edate=new JDatePicker(new Date(119,1,1));
 			shr=new JSpinner(new SpinnerNumberModel(9,0,23,1));
 			ehr=new JSpinner(new SpinnerNumberModel(10,0,23,1));
 			smin=new JSpinner(new SpinnerNumberModel(0,0,59,1));
@@ -331,7 +343,7 @@ class TestingFrame extends JFrame{
  		JTextField name=new JTextField(10);
  		JTextField description=new JTextField(20);
  		RoomSelectorComponent rsc=new RoomSelectorComponent();
- 		RequestRoomTab(){
+ 		RequestRoomTab(String username, String contact){
  			setLayout(new BorderLayout());
  			JPanel infoPanel=new JPanel();
  			infoPanel.add(rsc);
@@ -384,7 +396,7 @@ class TestingFrame extends JFrame{
 						TimePeriod tp=new TimePeriod(startDate,endDate,startTime,endTime,new DayMask(true),period);
 						al.add(tp);
 					}
-					Request r=new Request(evtName,desc,room,al);
+					Request r=new Request(username,contact,evtName,desc,room,al);
 					System.out.println("adding request");
 					RequestQueue.getInstance().add(r);
 				}
@@ -403,9 +415,69 @@ class TestingFrame extends JFrame{
  			ra.actionPerformed(null);
  		}
  	}
-	public TestingFrame() {
-		super("Schedule Creation");
-		setPreferredSize(new Dimension(1024,768));
+	static class ApprovalTab extends JPanel {
+		String[] cols= {"user","event","desc","time","action"};
+		ApprovalTab(){
+			setLayout(new BorderLayout());
+			JPanel grid=new JPanel(new GridLayout(0,cols.length));
+			add(grid,BorderLayout.NORTH);
+			Observer updater=new Observer() {
+				
+				@Override
+				public void update() {
+					grid.removeAll();
+					Border border=BorderFactory.createLineBorder(Color.BLUE, 1);
+					for(String s:cols) {
+						JLabel l=new JLabel(s);
+						l.setBorder(border);
+						grid.add(l);
+						
+					}
+					Border border1=BorderFactory.createLineBorder(Color.RED, 1);
+					for(Request r:RequestQueue.getInstance().getRequests()) {
+						JComboBox alternativeSelector=new JComboBox();
+						for(TimePeriod p:r.getRequestPeriods()) {
+							alternativeSelector.addItem(p);
+						}
+						JButton approve=new JButton("Approve");
+						JLabel username=new JLabel(r.getUsername()),
+								name=new JLabel(r.getName()),
+								desc=new JLabel(r.getDescription());
+						username.setBorder(border1);
+						name.setBorder(border1);
+						desc.setBorder(border1);
+
+						grid.add(username);
+						grid.add(name);
+						grid.add(desc);
+						grid.add(alternativeSelector);
+						grid.add(approve);
+						approve.addActionListener(new ActionListener() {
+
+							@Override
+							public void actionPerformed(ActionEvent arg0) {
+								Controller.approveEvent(r,(TimePeriod)alternativeSelector.getSelectedItem());
+							}
+							
+						});
+					}
+					
+				}
+			};
+			updater.update();
+			RequestQueue.getInstance().subscribe(updater);
+		}
+	}
+	public TabbedGUI(Access level) {
+		this(level,"","");
+	}
+	public TabbedGUI(String name, String contact) {
+		this(Access.LOW,name,contact);
+	}
+
+	private TabbedGUI(Access level,String name,String contact) {
+		super((level==Access.PRINCIPAL)?"Schedule Creation":"Schedule Request");
+		//setPreferredSize(new Dimension(1024,768));
 		try {
 		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 		        if ("Nimbus".equals(info.getName())) {
@@ -434,13 +506,17 @@ class TestingFrame extends JFrame{
 			}
         });
 		
-		
 		this.add(tabs);
-		tabs.addTab("Room Creation", new AddRoomTab());
-		tabs.addTab("add times", new AddTimeTab());
+		tabs.addTab("calendar", new CalendarTab());
+		if(level==Access.PRINCIPAL) {
+			tabs.addTab("Room Creation", new AddRoomTab());
+			tabs.addTab("add times", new AddTimeTab());
+			tabs.addTab("remove times", new EditTimesTab());
+			tabs.addTab("approve requests",new ApprovalTab());
+		}
+		tabs.addTab("Request", new RequestRoomTab(name,contact));
 		tabs.addTab("display", new ConsoleTab());
-		tabs.addTab("remove times", new EditTimesTab());
-		tabs.addTab("Rquest", new RequestRoomTab());
+		
 		this.pack();
 		//System.out.println(displayPanel.getSize());
 		//System.out.println(consoleOutput.getSize());

@@ -63,9 +63,10 @@ class WeekDisplayStrategy implements DisplayStrategy {
 	@Override
 	public void init() {
 
-		UIDefaults uidef = UIManager.getDefaults();
-		int swidth = Integer.parseInt(uidef.get("ScrollBar.width").toString());
-
+		//UIDefaults uidef = UIManager.getDefaults();
+		//int swidth = Integer.parseInt(uidef.get("ScrollBar.width").toString());
+		
+		int swidth=1;
 		Calendar start = CalendarUtil.getCalendar(new Date(), true);
 		start.set(Calendar.DAY_OF_WEEK, start.getFirstDayOfWeek());
 

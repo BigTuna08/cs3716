@@ -19,4 +19,9 @@ public enum Controller{
 	public void deleteSpace(Space s) {
 		ms.deleteSpace(s);
 	}
+	public static void approveEvent(Request r, TimePeriod period) {
+		Event e=new Event(r,period);
+		r.getLocation().addEvent(e);
+		RequestQueue.getInstance().removeRequest(r);
+	}
 }

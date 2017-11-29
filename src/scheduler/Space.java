@@ -18,4 +18,11 @@ public class Space implements Serializable{
 	public String toString() {
 		return name+" | "+description+" | schedule:\n"+schedule.toString();
 	}
+	public void addEvent(Event e) {
+		schedule.addEvent(e);
+	}
+
+	public String getName() {
+		return name;
+	}
 }
