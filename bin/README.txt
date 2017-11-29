@@ -1,6 +1,2 @@
-Run instructions (command line):
-
-To see Schedule creation run: java Application devel
-To see Request creation run: java Runner.class r
-
-
+from the bin directory
+java -classpath ".;commons-collections-3.1.jar" scheduler.Application
