@@ -1,65 +1,101 @@
 package scheduler;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/*
- * used to store all information required to request a room
+/**
+ * A request to schedule a room weekly
+ * containing alternative time periods
+ * @author ben
+ *
  */
-public class Request implements Serializable{
-
-	public Request(String name, String description, String evtName, String desc, ArrayList<EventTimeSpaceProposal> requestAlternatives) {
-		this.setUsername(name);
-		this.contact=contact;
-		this.name = name;
-		this.description = description;
-		this.requestAlternatives = requestAlternatives;
-	}
-	//private Stakeholder issuer;
-	private String username;//name of issuer
-	private String contact;//email
-	private String name;//name of event
-	private int daysPerWeek;
-	public String getContact() {
-		return contact;
-	}
-	public void setContact(String contact) {
-		this.contact = contact;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public ArrayList<EventTimeSpaceProposal> getRequestAlternatives() {
-		return requestAlternatives;
-	}
-	public void setRequestPeriods(ArrayList<EventTimeSpaceProposal> requestAlternatives) {
-		this.requestAlternatives = requestAlternatives;
-	}
+public class Request implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String name;// name of event
 	private String description;//comment
-	
+	private Space location;
 
-	ArrayList<EventTimeSpaceProposal> requestAlternatives;
-	private boolean highPriority = false;
-	
-	private boolean acceptOtherTimes;
-	private boolean acceptOtherDates;
-	private boolean acceptOtherRooms;
+	private String username;//name of issuer
+	String contact;//contact info for issuer
+
+	private int daysRequested;//number of days per week this event should occur
+	private ArrayList<EventTimeProposal> requestAlternatives;//proposed times
+	private int numberAlreadyApproved;//count of principal approved alternatives
+
 	public String toString() {
-		return "["+getUsername()+"|"+contact+"|"+name+"|"+description+"|"+location.getName()+"|"+requestAlternatives+"]";
+		return "[" + getUsername() + "|" + contact + "|" + getName() + "|" + getDescription() + "|"
+				+ getLocation().getName() + "|" + getRequestAlternatives() + "]";
 	}
+
+	public Request(String name, String description, Space location, String username, String contact, int daysRequested,
+			ArrayList<EventTimeProposal> requestAlternatives) {
+		super();
+		this.setName(name);
+		this.setDescription(description);
+		this.setLocation(location);
+		this.setUsername(username);
+		this.contact = contact;
+		this.setDaysRequested(daysRequested);
+		this.setRequestAlternatives(requestAlternatives);
+	}
+
 	public String getUsername() {
 		return username;
 	}
+
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getNumberAlreadyApproved() {
+		return numberAlreadyApproved;
+	}
+
+	public void setNumberAlreadyApproved(int numberAlreadyApproved) {
+		this.numberAlreadyApproved = numberAlreadyApproved;
+	}
+
+	public Space getLocation() {
+		return location;
+	}
+
+	public void setLocation(Space location) {
+		this.location = location;
+	}
+
+	public int getDaysRequested() {
+		return daysRequested;
+	}
+
+	public void setDaysRequested(int daysRequested) {
+		this.daysRequested = daysRequested;
+	}
+
+	public ArrayList<EventTimeProposal> getRequestAlternatives() {
+		return requestAlternatives;
+	}
+
+	public void setRequestAlternatives(ArrayList<EventTimeProposal> requestAlternatives) {
+		this.requestAlternatives = requestAlternatives;
 	}
 
 }

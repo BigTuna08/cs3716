@@ -1,123 +1,118 @@
-
 package scheduler;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Random;
 
-import javax.imageio.ImageIO;
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JToolBar;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-
 import de.costache.calendar.JCalendar;
-import de.costache.calendar.events.IntervalChangedEvent;
-import de.costache.calendar.events.IntervalChangedListener;
-import de.costache.calendar.events.IntervalSelectionEvent;
-import de.costache.calendar.events.IntervalSelectionListener;
-import de.costache.calendar.events.ModelChangedEvent;
-import de.costache.calendar.events.ModelChangedListener;
-import de.costache.calendar.events.SelectionChangedEvent;
-import de.costache.calendar.events.SelectionChangedListener;
 import de.costache.calendar.model.CalendarEvent;
 import de.costache.calendar.model.EventType;
-import de.costache.calendar.ui.strategy.DisplayStrategy.Type;
 import de.costache.calendar.util.CalendarUtil;
-
+import tabs.RoomSelectorComponent;
 /**
- * @author costache
- * 
+ * A calendar that displays availabilities and events for a particular room
+ * @author ben
+ *
  */
 public class GraphicalCalendar extends JPanel {
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JCalendar cal;
-	GraphicalCalendar(){
-		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+	RoomSelectorComponent rsc = new RoomSelectorComponent();
 
+	public GraphicalCalendar() {
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		cal = new JCalendar();
 		cal.setPreferredSize(new Dimension(1024, 768));
 		cal.getConfig().setAllDayPanelVisible(false);
-		
+		JPanel menu = new JPanel();
+		menu.add(new JLabel("select a room:"));
+		menu.add(rsc);
+		add(menu);
 		add(cal);
+		rsc.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				for (CalendarEvent ce : cal.getCalendarEvents()) {
+					cal.removeCalendarEvent(ce);
+				}
+				Space room = rsc.getRoom();
+				if (room == null)
+					return;
+				
+
+				// add availabilities
+				EventType availEvent = new EventType();
+				availEvent.setName("availability");
+				for (TimePeriod t : room.getSchedule().availabilities) {
+					LocalDate firstDay = t.semester.start;
+					int firstDayNum = firstDay.getDayOfWeek().getValue();
+					for (int i = 0; i < 7; i++) {
+						if (t.daysOfWeek.getDay(Utils.days[i])) {
+							// populate semester with events on this day
+							LocalDate currDay = firstDay.plusDays(i - firstDayNum);
+							while (currDay.isBefore(t.semester.end)) {
+								Date d1 = createCalendarDate(currDay, t.startTime);
+								Date d2 = createCalendarDate(currDay, t.endTime);
+								CalendarEvent ce = new CalendarEvent("avail", d1, d2, availEvent);
+								cal.addCalendarEvent(ce);
+								currDay = currDay.plusWeeks(1);
+							}
+						}
+
+					}
+				}
+				// add events
+				EventType evtType = new EventType();
+				evtType.setBackgroundColor(Color.RED);
+				for (Event evt : room.getSchedule().events) {
+					
+
+					for (TimePeriod tp : evt.periods) {
+						
+
+						int day = 0;
+						for (int i = 0; i < 7; i++)
+							if (tp.daysOfWeek.getDay(Utils.days[i]))
+								day = i;
+						LocalDate firstDay = tp.semester.start;
+						int firstDayNum = firstDay.getDayOfWeek().getValue();
+						LocalDate currDay = firstDay.plusDays(day - firstDayNum);
+						while (currDay.isBefore(tp.semester.end)) {
+							Date d1 = createCalendarDate(currDay, tp.startTime);
+							Date d2 = createCalendarDate(currDay, tp.endTime);
+							CalendarEvent ce = new CalendarEvent(evt.getName(), d1, d2, evtType);
+							cal.addCalendarEvent(ce);
+							currDay = currDay.plusWeeks(1);
+						}
+					}
+				}
+
+			}
+
+		});
+		if (rsc.getRoom() != null)
+			rsc.setSelectedIndex(0);// fires action
+		Semester s = SemesterManager.INSTANCE.getSemesters().get(0);
+		LocalDate sd = s.start;
+		cal.setSelectedDay(CalendarUtil.createDate(sd.getYear(), sd.getMonth().getValue(), 1, 0, 0, 0, 0));
+
+	}
 	
-
+	//utility function to translate time.localdate to the old date format
+	public Date createCalendarDate(LocalDate d, LocalTime t) {
+		return CalendarUtil.createDate(d.getYear(), d.getMonthValue(), d.getDayOfMonth(), t.getHour(), t.getMinute(), 0,
+				0);
 	}
-
-	private void initData() {
-/*
-		final EventType type1 = new EventType();
-
-		final EventType type2 = new EventType();
-		type2.setBackgroundColor(new Color(255, 103, 0, 128));
-
-		final EventType type3 = new EventType();
-		type3.setBackgroundColor(new Color(165, 103, 230, 128));
-
-		final EventType[] types = new EventType[3];
-		types[0] = type1;
-		types[1] = type2;
-		types[2] = type3;
-		Random r=new Random();
-		CalendarEvent calendarEvent;
-		for (int i = 0; i < 100000; i++) {
-			int hour = r.nextInt(19);
-			hour = hour > 17 ? 17 : hour;
-			hour = hour < 8 ? 8 : hour;
-			final int min = r.nextInt(59);
-			final int day = r.nextInt(28);
-			final int month = r.nextInt(11);
-			final int year = 2010 + r.nextInt(6);
-			final Date start = CalendarUtil.createDate(year, month, day, hour, min, 0, 0);
-			final Date end = CalendarUtil.createDate(year, month, day, hour + 1 + r.nextInt(4), r.nextInt(59), 0, 0);
-			calendarEvent = new CalendarEvent("an event", start, end);
-			calendarEvent.setType(types[r.nextInt(3)]);
-			calendarEvent.setAllDay(i % 2 == 0);
-			jCalendar.addCalendarEvent(calendarEvent);
-		}
-
-		Date start = CalendarUtil.createDate(2013, 1, 31, 12, 45, 0, 0);
-		Date end = CalendarUtil.createDate(2013, 1, 31, 16, 35, 0, 0);
-		calendarEvent = new CalendarEvent("Overlapping", start, end);
-		jCalendar.addCalendarEvent(calendarEvent);
-
-		start = CalendarUtil.createDate(2013, 1, 31, 8, 45, 0, 0);
-		end = CalendarUtil.createDate(2013, 1, 31, 15, 35, 0, 0);
-		calendarEvent = new CalendarEvent("Overlapping 2", start, end);
-		jCalendar.addCalendarEvent(calendarEvent);
-		*/
-	}
-
-
-
 
 }

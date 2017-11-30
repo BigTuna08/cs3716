@@ -1,28 +1,47 @@
 package scheduler;
+
 import java.io.Serializable;
 
-/*
- * Used to represent a space which can be booked
+/**
+ * A location that can be requested for an event
+ * @author ben
+ *
  */
-public class Space implements Serializable{
-	SpaceSchedule schedule;
-	String name;
+public class Space implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String description;
-	
-	public Space(String name,String description) {
-		this.description=description;
-		this.name=name;
-		schedule=new SpaceSchedule();
-	}
-	
-	public String toString() {
-		return name+" | "+description+" | schedule:\n"+schedule.toString();
-	}
-	public void addEvent(Event e) {
-		schedule.addEvent(e);
+	String name;
+	//the schedule of availabilities and events
+	private SpaceSchedule schedule;
+
+	public Space(String name, String description) {
+		this.description = description;
+		this.name = name;
+		setSchedule(new SpaceSchedule());
 	}
 
+	//adds an event to this space
+	public void addEvent(Event e) {
+		
+		getSchedule().addEvent(e);
+	}
+	
 	public String getName() {
 		return name;
+	}
+
+	public String toString() {
+		return name + " | " + description + " | schedule:\n" + getSchedule().toString();
+	}
+
+	public SpaceSchedule getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(SpaceSchedule schedule) {
+		this.schedule = schedule;
 	}
 }

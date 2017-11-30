@@ -15,14 +15,8 @@
  */
 package de.costache.calendar.ui.strategy;
 
-import de.costache.calendar.model.CalendarEvent;
-import de.costache.calendar.util.CalendarUtil;
-
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author theodorcostache

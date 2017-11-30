@@ -1,6 +1,3 @@
-separate db into 2 files for better concurrency between principal and requestors
-
-https://github.com/theodorcostache/java-swing-calendar
-
+TODO
 ability to unsubscribe so you can destruct JCOmponents
 gui updater factory that hooks into JComponent destructor

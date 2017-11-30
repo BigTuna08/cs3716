@@ -1,63 +1,54 @@
 package scheduler;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 /*
- * Used for representing an event. After a request has been approved
- * an event is created and added to the SpaceSchedule for a space 
- * The event occurs during all periods present in times.
+ * A school event. Occurs during each period present in periods.
  */
-public class Event implements Serializable{
+public class Event implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	//periods in which the event occurs
+	ArrayList<TimePeriod> periods = new ArrayList<>();
+	//the corresponding request
+	Request req;
 
-	Request req;	
-	TimePeriod period;
-	public Event(Request req,TimePeriod period) {
+	public Event(Request req, Collection<TimePeriod> periods) {
 		super();
 		this.req = req;
-		this.period=period;
+		this.periods.addAll(periods);
 	}
+
 	public String getContact() {
-		return req.getContact();
+		return req.contact;
 	}
-	public void setContact(String contact) {
-		req.setContact(contact);
-	}
-	public String getName() {
-		return req.getName();
-	}
-	public void setName(String name) {
-		req.setName(name);
-	}
+
 	public String getDescription() {
 		return req.getDescription();
 	}
-	public void setDescription(String description) {
-		req.setDescription(description);
-	}
-	public ArrayList<TimePeriod> getRequestPeriods() {
-		return req.getRequestPeriods();
-	}
-	public void setRequestPeriods(ArrayList<TimePeriod> requestPeriods) {
-		req.setRequestPeriods(requestPeriods);
-	}
+
 	public Space getLocation() {
 		return req.getLocation();
 	}
-	public void setLocation(Space location) {
-		req.setLocation(location);
+
+	public String getName() {
+		return req.getName();
 	}
-	public String toString() {
-		return req.toString();
-	}
+
 	public String getUsername() {
 		return req.getUsername();
 	}
+
 	public int hashCode() {
 		return req.hashCode();
 	}
-	public void setUsername(String username) {
-		req.setUsername(username);
+
+	public String toString() {
+		return req.toString() + "|periods:" + periods;
 	}
 
 }

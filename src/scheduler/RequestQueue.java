@@ -1,75 +1,108 @@
 package scheduler;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 
-public class RequestQueue implements Serializable, Transient, Observable{
-	static RequestQueue instance;
-	static RequestQueue getInstance() {
-		if(instance==null) {
-			try{
-				instance=(RequestQueue)Unserializer.fromFile("requestqueue.data");
-			}catch(Exception e) {
-				instance=new RequestQueue();
+/**
+ * The set of requests waiting for approval
+ * @author ben
+ *
+ */
+public class RequestQueue implements Serializable, Transient, Observable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	static RequestQueue instance;//singleton
+
+	public static RequestQueue getInstance() {
+		if (instance == null) {
+			try {
+				instance = (RequestQueue) Unserializer.fromFile("requestqueue.data");
+			} catch (Exception e) {
+				instance = new RequestQueue();
 			}
 		}
 		return instance;
 	}
+
+	//waiting requests
+	private ArrayList<Request> requests = new ArrayList<Request>();
+	transient ArrayList<Observer> subscribers;
+
+	public RequestQueue() {
+		initTransient();
+	}
+
+	//add a request
 	public void add(Request r) {
 		requests.add(r);
 		publish();
 	}
-	private ArrayList<Request> requests=new ArrayList<Request>();
-	public ArrayList<Request> getRequests(){
+
+	public ArrayList<Request> getRequests() {
 		return requests;
-	}
-	public RequestQueue() {
-		initTransient();
-	}
-	
-	public void processRequests() {
-		boolean finishedProcessing = false;
-		//loop through requests, auto approve if no conflicts
-		//if there is conflict, and one request is higher priority
-		//than others, auto approve it as well
-		
-		//loop through conflicts, and have principle resolve them
-		//(principle might not finish processing all
-		
-		if (!finishedProcessing) {
-			//save unresolved requests to REQUEST_FILE
-		}
-		
-		//update schedule file with approved requests
-		
-	}
-	
-	
-	public void decideRequests() {
-		//
 	}
 
 	@Override
 	public void initTransient() {
-		// TODO Auto-generated method stub
-		subscribers=new ArrayList();
+		subscribers = new ArrayList<Observer>();
 	}
 
-	public String toString() {
-		return "Requests"+Utils.stringifyCollection(requests);
-	}
-	transient ArrayList<Observer> subscribers;
-	@Override
-	public void subscribe(Observer o) {
-		subscribers.add(o);
-	}
+	//notify observers
 	public void publish() {
-		for(Observer o:subscribers) {
+		for (Observer o : subscribers) {
 			o.update();
 		}
 	}
+
+	//remove a request (possibly because it was made into an event)
 	public void removeRequest(Request r) {
 		requests.remove(r);
 		publish();
 	}
-	
+
+	@Override
+	public void subscribe(Observer o) {
+		subscribers.add(o);
+	}
+
+	public String toString() {
+		return "Requests" + Utils.stringifyCollection(requests);
+	}
+
+	//create and store a full event
+	public void approveEvent(Request r, Collection<TimePeriod> period) {
+		Event e = new Event(r, period);
+		r.getLocation().addEvent(e);
+		RequestQueue.getInstance().removeRequest(r);
+	}
+
+	//mark one alternative time for an request as approved
+	public boolean approveTimeSlot(Request r, EventTimeProposal time) {
+		time.approved = true;
+		
+		r.setNumberAlreadyApproved(r.getNumberAlreadyApproved() + 1);
+		if (r.getNumberAlreadyApproved() == r.getDaysRequested()) {
+			
+			ArrayList<TimePeriod> periods = new ArrayList<>();
+			
+			for (EventTimeProposal etp : r.getRequestAlternatives()) {
+				
+				if (etp.approved) {
+					periods.add(etp.period);
+				}
+			}
+			Event e = new Event(r, periods);
+			
+			r.getLocation().addEvent(e);
+			RequestQueue.getInstance().removeRequest(r);
+		}
+		publish();
+		MasterSchedule.getInstance().updateAll();
+		return true;
+
+	}
+
 }
