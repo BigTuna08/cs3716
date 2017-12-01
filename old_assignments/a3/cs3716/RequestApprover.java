@@ -53,7 +53,7 @@ public class RequestApprover {
 			in.close();
 			
 		} catch (FileNotFoundException e) {
-			System.out.println("Error reading in Rooms list");
+			
 		}
 		return requests;
 	}

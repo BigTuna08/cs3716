@@ -10,7 +10,7 @@ public class Runner {
 
 	public static void main(String[] args) {
 		if (args.length < 1) {
-			System.out.println("Requires Command Line Argument!!\n'r' for request creator\n's' for schedule creator");
+			
 			System.exit(0);
 		}
 		
@@ -25,7 +25,7 @@ public class Runner {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
 		else {
-			System.out.println("Invalid command line input!!! Use: \n'r' for request creator\n's' for schedule creator");
+			
 		}
 		
 	}

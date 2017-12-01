@@ -13,14 +13,13 @@ public class Space implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	String description;
-	String name;
+	String name;//should be unique
 	//the schedule of availabilities and events
-	private SpaceSchedule schedule;
+	private SpaceSchedule schedule=new SpaceSchedule();;
 
 	public Space(String name, String description) {
 		this.description = description;
 		this.name = name;
-		setSchedule(new SpaceSchedule());
 	}
 
 	//adds an event to this space
@@ -43,5 +42,8 @@ public class Space implements Serializable {
 
 	public void setSchedule(SpaceSchedule schedule) {
 		this.schedule = schedule;
+	}
+	public boolean equals(Space s) {
+		return s.getName().equals(getName())&&s.description.equals(this.description);
 	}
 }

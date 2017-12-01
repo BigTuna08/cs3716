@@ -20,7 +20,7 @@ public class SpaceSchedule implements Serializable {
 	//overrides availabilities with unavailable times
 	public Collection<TimePeriod> blackouts;
 	//events scheduled in this space
-	public Collection<Event> events;
+	public ArrayList<Event> events;
 
 	public SpaceSchedule() {
 		blackouts = new ArrayList<TimePeriod>();
@@ -35,7 +35,10 @@ public class SpaceSchedule implements Serializable {
 
 	//schedules an event
 	public void addEvent(Event e) {
+		
 		events.add(e);
+		
+		
 	}
 	
 	//schedules an availability

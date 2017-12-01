@@ -20,6 +20,7 @@ public class RequestQueue implements Serializable, Transient, Observable {
 		if (instance == null) {
 			try {
 				instance = (RequestQueue) Unserializer.fromFile("requestqueue.data");
+				
 			} catch (Exception e) {
 				instance = new RequestQueue();
 			}
@@ -48,6 +49,14 @@ public class RequestQueue implements Serializable, Transient, Observable {
 	@Override
 	public void initTransient() {
 		subscribers = new ArrayList<Observer>();
+		for(Request r:requests) {
+			for(Space s:MasterSchedule.getInstance().getSpaces()) {
+				if(r.getLocation().equals(s)) {
+					r.setLocation(s);
+					
+				}
+			}
+		}
 	}
 
 	//notify observers
@@ -95,7 +104,12 @@ public class RequestQueue implements Serializable, Transient, Observable {
 				}
 			}
 			Event e = new Event(r, periods);
-			
+			for(Space s:MasterSchedule.getInstance().getSpaces()) {
+				if(s.equals(r.getLocation())) {
+					r.setLocation(s);
+				}
+				
+			}
 			r.getLocation().addEvent(e);
 			RequestQueue.getInstance().removeRequest(r);
 		}

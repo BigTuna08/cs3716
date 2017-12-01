@@ -15,6 +15,7 @@ import javax.swing.border.Border;
 
 import scheduler.Controller;
 import scheduler.EventTimeProposal;
+import scheduler.MasterSchedule;
 import scheduler.Observer;
 import scheduler.Request;
 import scheduler.RequestQueue;
@@ -111,6 +112,7 @@ public class ApprovalTab extends JPanel {
 								output.setText("that suggestion can not be approved" + Controller.lastConflict);
 							}
 							Controller.INSTANCE.approveTimeSlot(r, etp);
+							
 							populator.populate();
 						}
 

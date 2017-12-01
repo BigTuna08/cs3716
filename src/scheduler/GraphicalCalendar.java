@@ -57,6 +57,7 @@ public class GraphicalCalendar extends JPanel {
 				for (TimePeriod t : room.getSchedule().availabilities) {
 					LocalDate firstDay = t.semester.start;
 					int firstDayNum = firstDay.getDayOfWeek().getValue();
+					firstDayNum--;
 					for (int i = 0; i < 7; i++) {
 						if (t.daysOfWeek.getDay(Utils.days[i])) {
 							// populate semester with events on this day
@@ -87,6 +88,7 @@ public class GraphicalCalendar extends JPanel {
 								day = i;
 						LocalDate firstDay = tp.semester.start;
 						int firstDayNum = firstDay.getDayOfWeek().getValue();
+						firstDayNum--;
 						LocalDate currDay = firstDay.plusDays(day - firstDayNum);
 						while (currDay.isBefore(tp.semester.end)) {
 							Date d1 = createCalendarDate(currDay, tp.startTime);

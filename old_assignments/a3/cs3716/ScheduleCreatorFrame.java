@@ -94,7 +94,7 @@ public class ScheduleCreatorFrame extends JFrame {
 			pan.add(p);
 		}
 		addPanel.add(pan);
-		System.out.println("ADDED");
+		
 		roomInfoPattern.add(addPanel);
 		roomInfoPattern.updateUI();
 	}

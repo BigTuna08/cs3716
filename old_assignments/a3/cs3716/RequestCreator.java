@@ -23,9 +23,9 @@ public class RequestCreator {
 	 */
 	public static void main(String[] args) {
 		if (args.length < 1) {
-			System.out.println("Requires Command Line argument with location of rooms file");
+			
 		}
-		System.out.println("loaded rooms from: " + args[0]);
+		
 		
 		
 	}
@@ -47,7 +47,7 @@ public class RequestCreator {
 			in.close();
 			
 		} catch (FileNotFoundException e) {
-			System.out.println("Error reading in Rooms list");
+			
 		}
 		return rooms;
 	}
