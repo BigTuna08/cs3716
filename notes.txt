@@ -1,3 +1,0 @@
-TODO
-ability to unsubscribe so you can destruct JCOmponents
-gui updater factory that hooks into JComponent destructor
