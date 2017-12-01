@@ -2,10 +2,14 @@ Group 12: Kyle Nickerson, Catherine Rendell & Ben Morrison
 
 Project available at https://github.com/BigTuna08/cs3716
 
+Run Instructions:
+on linux:
 
-Run instructions:
-To run project, open command prompt in root folder of project and run the command:
-java -jar RunnableApplication.jar
+java -classpath "bin/:lib/commons-collections-3.1.jar" scheduler.Application
+
+on windows:
+
+java -classpath "bin/;lib/commons-collections-3.1.jar" scheduler.Application
 
 
 Project Description:
